@@ -6,6 +6,7 @@ import java.io.InputStream;
  */
 public class Config {
     private static String stravaToken;
+    private static String fmiKey;
 
     /** Load configuration data from properties file.
      *  This method must be called before accessing any
@@ -18,6 +19,7 @@ public class Config {
 		    prop.load(is);
 	
 		    stravaToken = prop.getProperty("strava.token");
+		    fmiKey = prop.getProperty("fmi.key");
 		}
 		catch (Exception e) {
 		    System.out.println("Error loading configuration!");
@@ -28,5 +30,11 @@ public class Config {
      */
     public static String getStravaToken() {
     	return stravaToken;
+    }
+    
+    /** Get FMI API key
+     */
+    public static String getFmiKey() {
+    	return fmiKey;
     }
 }
