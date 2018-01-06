@@ -36,6 +36,7 @@ public class JHaServer {
 
 	public static void main(String[] args) {
         HttpServer server;
+        Config.load();
 		try {
 			server = HttpServer.create(new InetSocketAddress(8000), 0);
 	        server.createContext("/one", new MyHandler1());
