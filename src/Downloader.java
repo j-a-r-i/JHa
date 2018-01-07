@@ -6,14 +6,16 @@ import java.net.URL;
 
 public abstract class Downloader {
 
-	abstract protected String makeUrl();
+	abstract protected void makeUrl(UriBuilder uri);
 
 	abstract protected void fillRequest(HttpURLConnection con);
 	   
     public void download() {
 		System.out.println("download...");
 		try {
-		    URL url = new URL(makeUrl());	
+			UriBuilder uri = new UriBuilder();
+			makeUrl(uri);
+		    URL url = new URL(uri.toString());	
 		    HttpURLConnection con = (HttpURLConnection) url.openConnection();
 	
 		    con.setRequestMethod("GET");

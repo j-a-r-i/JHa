@@ -39,7 +39,7 @@ public class Nasdaq extends Downloader {
     public static final int NOKIA = 24311;
     public static final int CITYCON = 24249;
     
-    private static final String SITE = "https://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx?";
+    private static final String SITE = "https://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx";
     private int instrument;
     
     public Nasdaq() {
@@ -50,28 +50,22 @@ public class Nasdaq extends Downloader {
     }
     
     @Override
-    protected String makeUrl() {
-		StringBuilder sb = new StringBuilder();
+    protected void makeUrl(UriBuilder uri) {
 		boolean history = false;
 	
-		sb.append(SITE);
-		if (history)
-		    sb.append("Subsystem=History");
-		else
-		    sb.append("Subsystem=Prices");
-		sb.append('&');
-		if (history)
-		    sb.append("Action=GetDataSeries");
-		else
-		    sb.append("Action=GetInstrument");
-		sb.append('&');
-		sb.append("Instrument=HEX");
-		sb.append(instrument);
+		uri.setHost(SITE);
 		if (history) {
-		    sb.append('&');
-		    sb.append("FromDate=2017-12-01");
+			uri.addParam("Subsystem", "History");
+			uri.addParam("Action",    "GetDataSeries");
+		}
+		else {
+			uri.addParam("Subsystem", "Prices");
+			uri.addParam("Action",    "GetInstrument");
+		}
+		uri.addParam("Instrument", "HEX"+Integer.toString(instrument));
+		if (history) {
+			uri.addParam("FromDate", "2017-12-01");
 		}		
-		return sb.toString();
     }
 
 	@Override
