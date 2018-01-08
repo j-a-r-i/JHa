@@ -7,6 +7,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.net.HttpURLConnection;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.StringBuilder;
 
 class NasdaqData {
@@ -41,18 +42,28 @@ public class Nasdaq extends Downloader {
     
     private static final String SITE = "https://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx";
     private int instrument;
+    private boolean history;
+    private NasdaqData output;
     
     public Nasdaq() {
+    	history = false;
+    	output = new NasdaqData();
     }
 
     public void setInstrument(int hexCode) {
     	instrument = hexCode;
     }
     
+    public void setHistory(boolean val) {
+    	history = val;
+    }
+    
+    public NasdaqData getResult() {
+    	return output;
+    }
+    
     @Override
     protected void makeUrl(UriBuilder uri) {
-		boolean history = false;
-	
 		uri.setHost(SITE);
 		if (history) {
 			uri.addParam("Subsystem", "History");
@@ -78,10 +89,8 @@ public class Nasdaq extends Downloader {
      *  This is public for unit test.
      *  TODO refactor this method!
      */
-    public NasdaqData parseXml(String str) {
-    	NasdaqData data = new NasdaqData();
+    public void parsePrice(InputStream stream) {
     	XMLInputFactory factory = XMLInputFactory.newInstance();
-    	ByteArrayInputStream stream = new ByteArrayInputStream(str.getBytes());
     	try {
 			XMLEventReader reader = factory.createXMLEventReader(stream);
 			while (reader.hasNext()) {
@@ -93,11 +102,11 @@ public class Nasdaq extends Downloader {
 					if (element.getName().getLocalPart().equals("inst")) {
 						Attribute attr = element.getAttributeByName(new QName("nm"));
 						if (attr != null) {
-							data.setCompany(attr.getValue());
+							output.setCompany(attr.getValue());
 						}
 						attr = element.getAttributeByName(new QName("cp"));
 						if (attr != null) {
-							data.setValue(Float.parseFloat(attr.getValue()));
+							output.setValue(Float.parseFloat(attr.getValue()));
 						}
 					}
 				}
@@ -105,6 +114,5 @@ public class Nasdaq extends Downloader {
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
-    	return data;
     }
 }
