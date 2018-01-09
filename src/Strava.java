@@ -1,5 +1,4 @@
 import java.net.HttpURLConnection;
-import java.lang.StringBuilder;
 
 public class Strava extends Downloader {
     private static final String SITE = "https://www.strava.com/api/v3/athlete/activities";

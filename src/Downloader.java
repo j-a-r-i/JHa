@@ -5,7 +5,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.function.Consumer;
-import java.util.function.Function;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 public abstract class Downloader {
 
@@ -49,4 +54,25 @@ public abstract class Downloader {
 		catch(IOException e) {
 		}
 	}
+    
+    public void parseXml(InputStream stream, String tag, Consumer<StartElement> fnHandle) {
+    	XMLInputFactory factory = XMLInputFactory.newInstance();
+    	try {
+			XMLEventReader reader = factory.createXMLEventReader(stream);
+			while (reader.hasNext()) {
+				XMLEvent event = reader.nextEvent();
+				if (event.isStartElement()) {
+					StartElement element = event.asStartElement();
+
+					System.out.println(element.getName().getLocalPart());
+					if (element.getName().getLocalPart().equals(tag)) {
+						fnHandle.accept(element);
+					}
+				}
+			}
+    	} catch (XMLStreamException e) {
+    		e.printStackTrace();
+    	}
+
+    }
 }

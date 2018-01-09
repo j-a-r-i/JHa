@@ -1,14 +1,9 @@
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 import java.net.HttpURLConnection;
-import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.InputStream;
-import java.lang.StringBuilder;
 
 class NasdaqData {
 	private String company;
@@ -43,11 +38,11 @@ public class Nasdaq extends Downloader {
     private static final String SITE = "https://www.nasdaqomxnordic.com/webproxy/DataFeedProxy.aspx";
     private int instrument;
     private boolean history;
-    private NasdaqData output;
+    private List<NasdaqData> output;
     
     public Nasdaq() {
     	history = false;
-    	output = new NasdaqData();
+    	output = new ArrayList<>();
     }
 
     public void setInstrument(int hexCode) {
@@ -58,7 +53,7 @@ public class Nasdaq extends Downloader {
     	history = val;
     }
     
-    public NasdaqData getResult() {
+    public List<NasdaqData> getResult() {
     	return output;
     }
     
@@ -87,32 +82,44 @@ public class Nasdaq extends Downloader {
    
     /** Parse XML output from the API.
      *  This is public for unit test.
-     *  TODO refactor this method!
      */
     public void parsePrice(InputStream stream) {
-    	XMLInputFactory factory = XMLInputFactory.newInstance();
-    	try {
-			XMLEventReader reader = factory.createXMLEventReader(stream);
-			while (reader.hasNext()) {
-				XMLEvent event = reader.nextEvent();
-				if (event.isStartElement()) {
-					StartElement element = event.asStartElement();
-
-					System.out.println(element.getName().getLocalPart());
-					if (element.getName().getLocalPart().equals("inst")) {
-						Attribute attr = element.getAttributeByName(new QName("nm"));
-						if (attr != null) {
-							output.setCompany(attr.getValue());
-						}
-						attr = element.getAttributeByName(new QName("cp"));
-						if (attr != null) {
-							output.setValue(Float.parseFloat(attr.getValue()));
-						}
-					}
-				}
+    	output.clear();
+    	
+    	parseXml(stream, "inst", (element) -> {
+        	NasdaqData data = new NasdaqData();
+			Attribute attr = element.getAttributeByName(new QName("nm"));
+			if (attr != null) {
+				data.setCompany(attr.getValue());
 			}
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
+			attr = element.getAttributeByName(new QName("cp"));
+			if (attr != null) {
+				data.setValue(Float.parseFloat(attr.getValue()));
+			}	
+	    	output.add(data);
+    	});
+    	
+    } 
+    
+    /** Parse XML output from the API.
+     *  This is public for unit test.
+     */
+    public void parseHistory(InputStream stream) {
+    	output.clear();
+    	
+    	parseXml(stream, "hi", (element) -> {
+        	NasdaqData data = new NasdaqData();
+			Attribute attr = element.getAttributeByName(new QName("ins"));
+			if (attr != null) {
+				data.setCompany(attr.getValue());
+			}
+			attr = element.getAttributeByName(new QName("cp"));
+			if (attr != null) {
+				data.setValue(Float.parseFloat(attr.getValue()));
+			}	
+	    	output.add(data);
+    	});
     }
+
+
 }
