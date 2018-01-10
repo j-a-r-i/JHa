@@ -26,6 +26,12 @@ public class Config {
 		}
     }
 
+    /** Port for the HTTP server.
+    */
+    public static int getServerPort() {
+    	return 8000;
+    }
+    
     /** Get strava API token
      */
     public static String getStravaToken() {

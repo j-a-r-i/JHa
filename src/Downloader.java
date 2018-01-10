@@ -64,7 +64,6 @@ public abstract class Downloader {
 				if (event.isStartElement()) {
 					StartElement element = event.asStartElement();
 
-					System.out.println(element.getName().getLocalPart());
 					if (element.getName().getLocalPart().equals(tag)) {
 						fnHandle.accept(element);
 					}
@@ -73,6 +72,9 @@ public abstract class Downloader {
     	} catch (XMLStreamException e) {
     		e.printStackTrace();
     	}
-
+    }
+    
+    public void parseJson(InputStream stream) {
+    	//JsonParser parser = Json.createParser(stream);
     }
 }
