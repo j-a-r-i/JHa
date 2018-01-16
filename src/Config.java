@@ -7,7 +7,8 @@ import java.io.InputStream;
 public class Config {
     private static String stravaToken;
     private static String fmiKey;
-
+    private static String redisServer;
+    
     /** Load configuration data from properties file.
      *  This method must be called before accessing any
      *  configuration data.
@@ -20,6 +21,7 @@ public class Config {
 	
 		    stravaToken = prop.getProperty("strava.token");
 		    fmiKey = prop.getProperty("fmi.key");
+		    redisServer = prop.getProperty("redis.server");
 		}
 		catch (Exception e) {
 		    System.out.println("Error loading configuration!");
@@ -29,7 +31,7 @@ public class Config {
     /** Port for the HTTP server.
     */
     public static int getServerPort() {
-    	return 8000;
+    	return 8001;
     }
     
     /** Get strava API token
@@ -42,5 +44,11 @@ public class Config {
      */
     public static String getFmiKey() {
     	return fmiKey;
+    }
+    
+    /** Get FMI API key
+     */
+    public static String getRedisServer() {
+    	return redisServer;
     }
 }
