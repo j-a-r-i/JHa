@@ -4,9 +4,11 @@ import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.Headers;
 import java.util.logging.Logger;
 //import static Tag;
 import java.util.stream.Collectors;
+import java.net.URI;
 
 //------------------------------------------------------------------------------
 abstract class BaseHandler implements HttpHandler {
@@ -19,8 +21,13 @@ abstract class BaseHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-	LOGGER.info("MyHandler:"+path);
+	URI uri = t.getRequestURI();
+	
+	LOGGER.info("MyHandler:"+path + " path:" + uri.getPath());
+
 	String response = content();
+	Headers h = t.getResponseHeaders();
+	h.set("Content-Type","text/html");
 	
 	t.sendResponseHeaders(200, response.length());
 	OutputStream os = t.getResponseBody();
@@ -48,15 +55,18 @@ class RedisHandler extends BaseHandler {
     }
 
     private String row(String line) {
-	LOGGER.info(line);
-	return Tag.tag("li", line);
+	//LOGGER.info(line);
+	String[] values = line.split(",");
+	return Tag.tag("tr",
+		       Tag.tag("td", values[0]),
+		       Tag.tag("td", values[1]));
     }
 
     @Override
     public String content() {
 	String data = Tag.tag("div",
 			      Tag.tag("h1", "Redis " + key),
-			      Tag.tag("ul",
+			      Tag.tag("table",
 				      redis.values(key).stream()
 				      .map(this::row)
 				      .collect(Collectors.joining(""))
@@ -79,11 +89,16 @@ class MyHandler1 extends BaseHandler {
 
 //------------------------------------------------------------------------------
 class LinkHandler extends BaseHandler {
-    private MyRedis redis;
+    private String linkStr;
 
-    public LinkHandler(MyRedis r) {
+    public LinkHandler(MyRedis redis) {
 	super("/links");
-	redis = r;
+
+	linkStr = redis.keys().stream()
+	    .map(i -> Tag.tag("li",
+			      Tag.a("/data/"+i, i)))
+	    .collect(Collectors.joining(""));
+
     }
 	
     @Override
@@ -91,11 +106,7 @@ class LinkHandler extends BaseHandler {
 	String links = Tag.tag("div",
 			       Tag.tag("h1", "Data sources"),
 			       Tag.tag("ul",
-				       redis.keys().stream()
-				       .map(i -> Tag.tag("li",
-							 Tag.a("/data/"+i, i)))
-				       .collect(Collectors.joining(""))
-				       ));
+				       linkStr));
 	 
 	return links;
     }
@@ -137,6 +148,7 @@ public class JHaServer {
 	    e.printStackTrace();
 	}
 
-	redis.close();
+	//LOGGER.info("close redis");
+	//redis.close();
     }
 }
