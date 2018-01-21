@@ -29,15 +29,16 @@ public abstract class Downloader {
 			in.close();		
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			Log.error("dumpStream", e);
 		}
 	}
 	
     public void download(Consumer<InputStream> parseFn) {
-		System.out.println("download...");
 		try {
 			UriBuilder uri = new UriBuilder();
 			makeUrl(uri);
+			
+			Log.info("download " + uri.toString());
 			
 		    URL url = new URL(uri.toString());	
 		    HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -52,6 +53,7 @@ public abstract class Downloader {
 		    parseFn.accept(con.getInputStream());
 		}
 		catch(IOException e) {
+			Log.error("download", e);
 		}
 	}
     
@@ -70,7 +72,7 @@ public abstract class Downloader {
 				}
 			}
     	} catch (XMLStreamException e) {
-    		e.printStackTrace();
+    		Log.error("parseXml", e);
     	}
     }
     

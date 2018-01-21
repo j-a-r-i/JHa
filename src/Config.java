@@ -24,7 +24,7 @@ public class Config {
 		    redisServer = prop.getProperty("redis.server");
 		}
 		catch (Exception e) {
-		    System.out.println("Error loading configuration!");
+		    Log.error("load configuration", e);
 		}
     }
 

@@ -149,6 +149,7 @@ public class JHaServer {
 		System.setProperty("java.util.logging.SimpleFormatter.format",
 				   "[%1$tF %1$tT] [%4$-7s] %5$s %n");
 		LOGGER = Logger.getLogger(JHaServer.class.getName());
+		Log.init();
     }
     
     public static void main(String[] args) {
@@ -171,7 +172,7 @@ public class JHaServer {
 		    server.setExecutor(null); // creates a default executor
 		    server.start();
 		} catch (IOException e) {
-		    e.printStackTrace();
+			Log.error("HTTP server", e);
 		}
 
 	//LOGGER.info("close redis");
