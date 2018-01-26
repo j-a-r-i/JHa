@@ -63,7 +63,6 @@ abstract class BaseHandler implements HttpHandler {
 
 //------------------------------------------------------------------------------
 class TableHandler extends BaseHandler {
-    private final static Logger LOGGER = Logger.getLogger(TableHandler.class.getName());
     private MyRedis redis;
 
     public TableHandler(MyRedis r) {
