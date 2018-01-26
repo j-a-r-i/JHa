@@ -1,6 +1,7 @@
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,14 +11,14 @@ class StravaActivity {
 	private long moving_time;
 	private long elapsed_time;
 	private String type;
-	private String start_date_local;
+	private Date start_date;
 	
 	public StravaActivity() {
 	}
 	
 	@Override
 	public String toString() {
-		return "act [type=" + type +", distance=" + distance + ", moving_time=" + moving_time + "]";
+		return "act [type=" + type + ", distance=" + distance + ", moving=" + moving_time + ", elapsed=" + elapsed_time  + ", start=" + start_date+ "]";
 	}
 }
 
