@@ -70,8 +70,6 @@ public class Strava extends Downloader {
 			public LocalDateTime deserialize(JsonElement json, Type tpe, JsonDeserializationContext context)
 					throws JsonParseException {
 				return ZonedDateTime.parse(json.getAsJsonPrimitive().getAsString()).toLocalDateTime();
-				//Instant instant = Instant.ofEpochMilli(json.getAsJsonPrimitive().getAsLong());
-		        //return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());				
 			}
 		});
 		
