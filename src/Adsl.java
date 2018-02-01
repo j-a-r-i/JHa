@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -12,17 +13,22 @@ public class Adsl {
 
 	public Adsl() {
  		try {
-			socket = new Socket("192.168.0.254", 23);
+			socket = new Socket(Config.getAdslHost(), 23);
 	    	socket.setKeepAlive(true);
 	    	r = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	    	w = new PrintWriter(socket.getOutputStream(), true);
 	    	
 	    	readUntil("ogin: ");
-	    	w.println("admin");
+	    	w.println(Config.getAdslUser());
 	    	
 	    	readUntil("assword: ");
-	    	w.println("1234");
+	    	w.println(Config.getAdslPasswd());
 
+	    	readUntil(" > ");
+	    	w.println("help");
+	    	
+	    	readUntil(" > ");
+	    	w.println("quit");
 	    	socket.close();    	
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -32,6 +38,17 @@ public class Adsl {
 			e.printStackTrace();
 		}
     }
+	
+	public void isAdslOn() {
+		InetAddress inet = Config.getAdslHost();
+		
+		try {
+			System.out.println("ping " + (inet.isReachable(3000) ? "OK" : "FAILED"));
+		} catch (IOException e) {
+			System.out.println("ping ERROR");
+			e.printStackTrace();
+		} 
+	}
     
 	private void readUntil(String match) throws IOException {
     	StringBuilder buf = new StringBuilder();
