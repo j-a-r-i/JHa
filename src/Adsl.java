@@ -13,16 +13,16 @@ public class Adsl {
 
 	public Adsl() {
  		try {
-			socket = new Socket(Config.getAdslHost(), 23);
+			socket = new Socket(Config.getAdsl().getHost(), 23);
 	    	socket.setKeepAlive(true);
 	    	r = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	    	w = new PrintWriter(socket.getOutputStream(), true);
 	    	
 	    	readUntil("ogin: ");
-	    	w.println(Config.getAdslUser());
+	    	w.println(Config.getAdsl().getUser());
 	    	
 	    	readUntil("assword: ");
-	    	w.println(Config.getAdslPasswd());
+	    	w.println(Config.getAdsl().getPasswd());
 
 	    	readUntil(" > ");
 	    	w.println("help");
@@ -40,7 +40,7 @@ public class Adsl {
     }
 	
 	public void isAdslOn() {
-		InetAddress inet = Config.getAdslHost();
+		InetAddress inet = Config.getAdsl().getHost();
 		
 		try {
 			System.out.println("ping " + (inet.isReachable(3000) ? "OK" : "FAILED"));

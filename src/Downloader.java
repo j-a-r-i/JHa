@@ -18,6 +18,8 @@ public abstract class Downloader {
 
 	abstract protected void fillRequest(HttpURLConnection con);
 	
+	abstract public void parse(InputStream stream);
+	
 	static public void dumpStream(InputStream inStream) {		
 		try {
 			String inputLine;

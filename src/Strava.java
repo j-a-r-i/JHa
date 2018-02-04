@@ -60,6 +60,7 @@ public class Strava extends Downloader {
 		con.setRequestProperty("Content-Type", "application/json");	
 	}			   
 
+	@Override
 	public void parse(InputStream stream) {
 		GsonBuilder builder = new GsonBuilder();
 

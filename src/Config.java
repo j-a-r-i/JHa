@@ -4,16 +4,49 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+class ConfigSite {
+    private String name;
+    private String host;
+    private String user;
+    private String passwd;
+
+    public ConfigSite(String n) {
+    	name = n;
+    }
+
+    public void load(Properties prop) {
+		host = prop.getProperty(name + ".host");
+		user = prop.getProperty(name + ".user");
+		passwd = prop.getProperty(name + ".passwd");
+    }
+
+    public InetAddress getHost() {
+		try {
+		    return InetAddress.getByName(host);
+		} catch (UnknownHostException e) {
+		    e.printStackTrace();
+		}
+		return null;
+    }
+	
+    public String getUser() {
+    	return user;
+    }
+	
+    public String getPasswd() {
+    	return passwd;
+    }
+}
+
 /** Store for configuration data.
  */
 public class Config {
     private static String stravaToken;
     private static String fmiKey;
     private static String redisServer;
-    private static String adslHost;
-    private static String adslUser;
-    private static String adslPasswd;
-    
+    private static ConfigSite adsl = new ConfigSite("adsl");
+    private static ConfigSite smtp = new ConfigSite("smtp");
+    private static String emailTo;
     /** Load configuration data from properties file.
      *  This method must be called before accessing any
      *  configuration data.
@@ -27,9 +60,9 @@ public class Config {
 		    stravaToken = prop.getProperty("strava.token");
 		    fmiKey = prop.getProperty("fmi.key");
 		    redisServer = prop.getProperty("redis.server");
-		    adslHost = prop.getProperty("adsl.host");
-		    adslUser = prop.getProperty("adsl.user");
-		    adslPasswd = prop.getProperty("adsl.passwd");
+		    adsl.load(prop);
+		    smtp.load(prop);
+		    emailTo = prop.getProperty("email.to");
 		}
 		catch (Exception e) {
 		    Log.error("load configuration", e);
@@ -54,28 +87,27 @@ public class Config {
     	return fmiKey;
     }
     
-    /** Get FMI API key
+    /** Get redis server
      */
     public static String getRedisServer() {
     	return redisServer;
     }
 
-    /** Get ADSL server hostname.
+    /** Get ADSL host.
      */
-	public static InetAddress getAdslHost() {
-		try {
-			return InetAddress.getByName(adslHost);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public static String getAdslUser() {
-		return adslUser;
-	}
-	
-	public static String getAdslPasswd() {
-		return adslPasswd;
-	}
+    public static ConfigSite getAdsl() {
+    	return adsl;
+    }
+
+    /** Get SMTP host.
+     */
+    public static ConfigSite getSmtp() {
+    	return smtp;
+    }
+
+    /** Get email recipient
+     */
+    public static String getEmailTo() {
+    	return emailTo;
+    }
 }

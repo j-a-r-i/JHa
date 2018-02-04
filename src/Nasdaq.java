@@ -29,6 +29,11 @@ class NasdaqData {
 	public String getCompany() {
 		return company;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("HEX %s price: %f",  company, value);
+	}
 }
 
 public class Nasdaq extends Downloader {
@@ -121,5 +126,11 @@ public class Nasdaq extends Downloader {
     	});
     }
 
-
+    @Override
+    public void parse(InputStream stream) {
+    	if (history)
+    		parseHistory(stream);
+    	else
+    		parsePrice(stream);
+    }
 }

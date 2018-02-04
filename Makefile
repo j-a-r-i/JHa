@@ -3,7 +3,7 @@ JAR_DIR=/home/git/jar
 
 .PHONY:doc
 
-CLASSPATH="${JAR_DIR}/jedis-2.9.0.jar;${JAR_DIR}/gson-2.8.2.jar;bin"
+CLASSPATH="${JAR_DIR}/mail-1.4.jar;${JAR_DIR}/jedis-2.9.0.jar;${JAR_DIR}/gson-2.8.2.jar;bin"
 
 
 all:
